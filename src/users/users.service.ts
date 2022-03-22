@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import { User } from "@prisma/client";
+import { HttpException, Injectable } from "@nestjs/common";
+import { Prisma, User } from "@prisma/client";
 import { DatabaseService } from "../database/database.service";
 
 @Injectable()
@@ -13,5 +13,13 @@ export class UsersService {
 
   async createUser(data: any): Promise<User> {
     return await this.prisma.user.create({ data });
+  }
+
+  async findUserByEmail({ email }: Prisma.UserCreateInput): Promise<User | undefined> {
+    try {
+      return await this.prisma.user.findUnique({ where: { email } });
+    } catch (e) {
+      throw new HttpException(e, 404);
+    }
   }
 }
