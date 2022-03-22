@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prisma:merge": "ts-node ./scripts/merge.prisma.ts",
+    "prisma:migrate": "prisma migrate dev --name ",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
