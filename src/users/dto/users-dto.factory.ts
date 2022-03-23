@@ -15,14 +15,14 @@ export class UsersDtoFactory extends AbstractFactory<User, CreatUserDto | UserDt
   }
 
   async produceUserDto(user: User): Promise<UserDto> {
-    return this.create(user, new UserDto());
+    return this.create<UserDto>(user, new UserDto());
   }
 
   async produceAuthedUserDto(user: User, token: string): Promise<AuthedUserDto> {
-    return this.create({ ...user, token }, new AuthedUserDto());
+    return this.create<AuthedUserDto>({ ...user, token }, new AuthedUserDto());
   }
 
   async produceCreateUserDto(user: User): Promise<CreatUserDto> {
-    return this.create(user, new CreatUserDto());
+    return this.create<CreatUserDto>(user, new CreatUserDto());
   }
 }
