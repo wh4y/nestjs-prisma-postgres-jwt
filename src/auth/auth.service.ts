@@ -1,10 +1,11 @@
 import { HttpException, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { UsersService } from "../users/users.service";
-import { Prisma, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { UsersDtoFactory } from "../users/dto/users-dto.factory";
 import { CreatUserDto } from "../users/dto/creat-user.dto";
+import { AuthedUserDto } from "../users/dto/authed-user.dto";
 
 @Injectable()
 export class AuthService {
@@ -16,7 +17,7 @@ export class AuthService {
   ) {
   }
 
-  async validateUser({ email, password }: CreatUserDto, existingUser: User) {
+  async validateUser({ email, password }: CreatUserDto, existingUser: User): Promise<boolean> {
     return await bcrypt.compare(password, existingUser.password);
   }
 
@@ -24,7 +25,11 @@ export class AuthService {
     return this.jwtService.sign({ email });
   }
 
-  async login(dto: CreatUserDto) {
+  async generateRefreshToken() {
+
+  }
+
+  async login(dto: CreatUserDto): Promise<AuthedUserDto> {
     const existingUser = await this.usersService.findUserByEmail(dto);
     if (!existingUser) throw new UnauthorizedException("Email or password aren't valid!");
 
@@ -36,7 +41,7 @@ export class AuthService {
     return this.usersDtoFactory.produceAuthedUserDto(existingUser, token);
   }
 
-  async register(dto: CreatUserDto) {
+  async register(dto: CreatUserDto): Promise<AuthedUserDto> {
     let candidate = await this.usersService.findUserByEmail(dto);
     if (candidate) {
       throw new HttpException("This user already exists!", 409);

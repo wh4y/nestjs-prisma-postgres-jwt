@@ -6,7 +6,7 @@ import { CreatUserDto } from "./creat-user.dto";
 
 export class UsersDtoFactory extends AbstractFactory<User, CreatUserDto | UserDto | AuthedUserDto> {
 
-  create(user, schema) {
+  async create<R>(user, schema): Promise<R> {
     Object.keys(user).forEach((prop) => {
       if (schema.hasOwnProperty(prop)) schema[prop] = user[prop];
     });
@@ -14,15 +14,15 @@ export class UsersDtoFactory extends AbstractFactory<User, CreatUserDto | UserDt
     return schema;
   }
 
-  produceUserDto(user: User) {
+  async produceUserDto(user: User): Promise<UserDto> {
     return this.create(user, new UserDto());
   }
 
-  produceAuthedUserDto(user: User, token: string) {
+  async produceAuthedUserDto(user: User, token: string): Promise<AuthedUserDto> {
     return this.create({ ...user, token }, new AuthedUserDto());
   }
 
-  produceCreateUserDto(user: User) {
+  async produceCreateUserDto(user: User): Promise<CreatUserDto> {
     return this.create(user, new CreatUserDto());
   }
 }
