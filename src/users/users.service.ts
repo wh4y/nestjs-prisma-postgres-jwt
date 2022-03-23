@@ -16,7 +16,7 @@ export class UsersService {
     return await this.prisma.user.create({ data });
   }
 
-  async findUserByEmail({ email }: Prisma.UserCreateInput): Promise<User | undefined> {
+  async findUserByEmail({ email }: CreatUserDto): Promise<User | undefined> {
     try {
       return await this.prisma.user.findUnique({ where: { email } });
     } catch (e) {

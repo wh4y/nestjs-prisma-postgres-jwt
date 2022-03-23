@@ -1,14 +1,16 @@
 import { IsEmail, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { User } from "@prisma/client";
 
 export class UserDto {
+
   @IsNumber()
   @IsNotEmpty()
-  id: number;
+  id: number = -1;
 
   @IsString()
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email: string = "";
 
-  createdAt: string;
+  createdAt: Date;
 }
