@@ -1,6 +1,7 @@
 import { HttpException, Injectable } from "@nestjs/common";
 import { Prisma, User } from "@prisma/client";
 import { DatabaseService } from "../database/database.service";
+import { CreatUserDto } from "./dto/creat-user.dto";
 
 @Injectable()
 export class UsersService {
@@ -11,7 +12,7 @@ export class UsersService {
     return await this.prisma.user.findMany();
   }
 
-  async createUser(data: any): Promise<User> {
+  async createUser(data: CreatUserDto): Promise<User> {
     return await this.prisma.user.create({ data });
   }
 
