@@ -4,7 +4,7 @@ import { AuthModule } from "./auth/auth.module";
 import { TestJwtModule } from "./testjwt/test-jwt.module";
 import { SharedModule } from "./shared/shared.module";
 import { ConfigModule } from "@nestjs/config";
-import Joi from "joi";
+import * as Joi from "joi";
 
 @Module({
   imports: [
