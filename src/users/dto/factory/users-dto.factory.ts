@@ -1,8 +1,8 @@
-import { UserDto } from "./user.dto";
+import { UserDto } from "../user.dto";
 import { User } from "@prisma/client";
-import { AuthedUserDto } from "./authed-user.dto";
-import { AbstractUsersFactory } from "./factory/abstract.users-factory";
-import { CreatUserDto } from "./creat-user.dto";
+import { AuthedUserDto } from "../authed-user.dto";
+import { AbstractUsersFactory } from "./abstract.users-factory";
+import { CreatUserDto } from "../creat-user.dto";
 
 export class UsersDtoFactory extends AbstractUsersFactory<User, CreatUserDto | UserDto | AuthedUserDto> {
 

@@ -3,16 +3,17 @@ import { UsersService } from "../users/users.service";
 import { User } from "@prisma/client";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
-import { UsersDtoFactory } from "../users/dto/users-dto.factory";
+import { UsersDtoFactory } from "../users/dto/factory/users-dto.factory";
 import { CreatUserDto } from "../users/dto/creat-user.dto";
 import { AuthedUserDto } from "../users/dto/authed-user.dto";
+import { USERS_DTO_FACTORY } from "../users/constants";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    @Inject("USERS_DTO_FACTORY")
+    @Inject(USERS_DTO_FACTORY)
     private readonly usersDtoFactory: UsersDtoFactory
   ) {
   }
