@@ -1,10 +1,10 @@
 import { UserDto } from "./user.dto";
 import { User } from "@prisma/client";
 import { AuthedUserDto } from "./authed-user.dto";
-import { AbstractFactory } from "../../shared/factory/abstract.factory";
+import { AbstractUsersFactory } from "./factory/abstract.users-factory";
 import { CreatUserDto } from "./creat-user.dto";
 
-export class UsersDtoFactory extends AbstractFactory<User, CreatUserDto | UserDto | AuthedUserDto> {
+export class UsersDtoFactory extends AbstractUsersFactory<User, CreatUserDto | UserDto | AuthedUserDto> {
 
   async create<R>(user, schema): Promise<R> {
     Object.keys(user).forEach((prop) => {
