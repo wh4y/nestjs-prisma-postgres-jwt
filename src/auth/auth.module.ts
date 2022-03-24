@@ -8,8 +8,8 @@ import { UsersModule } from "../users/users.module";
   imports: [
     UsersModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET ?? "SeCrEt",
-      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN ?? "180s" }
+      secret: process.env.ACCESS_TOKEN_SECRET ?? "SeCrEt",
+      signOptions: { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN ?? "30d" }
     })
   ],
   controllers: [AuthController],
