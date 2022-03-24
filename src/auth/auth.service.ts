@@ -1,45 +1,51 @@
 import { HttpException, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { UsersService } from "../users/users.service";
 import { User } from "@prisma/client";
-import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { UsersDtoFactory } from "../users/dto/factory/users-dto.factory";
 import { CreatUserDto } from "../users/dto/creat-user.dto";
 import { AuthedUserDto } from "../users/dto/authed-user.dto";
 import { USERS_DTO_FACTORY } from "../users/constants";
+import { JwtHelperService } from "./jwt-helper/jwt-helper.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
-    private readonly jwtService: JwtService,
+    private readonly jwtHelper: JwtHelperService,
     @Inject(USERS_DTO_FACTORY)
     private readonly usersDtoFactory: UsersDtoFactory
   ) {
   }
 
-  async validateUser({ email, password }: CreatUserDto, existingUser: User): Promise<boolean> {
+  private static async validatePassword({ password }: CreatUserDto, existingUser: User): Promise<boolean> {
     return await bcrypt.compare(password, existingUser.password);
   }
 
-  async generateToken({ email }: CreatUserDto) {
-    return this.jwtService.sign({ email });
-  }
-
-  async generateRefreshToken() {
-
-  }
-
   async login(dto: CreatUserDto): Promise<AuthedUserDto> {
-    const existingUser = await this.usersService.findUserByEmail(dto);
+    let existingUser = await this.usersService.findUserByEmail(dto);
     if (!existingUser) throw new UnauthorizedException("Email or password aren't valid!");
 
-    const isPasswordValid = await this.validateUser(dto, existingUser);
+    const isPasswordValid = await AuthService.validatePassword(dto, existingUser);
     if (!isPasswordValid) throw new UnauthorizedException("Email or password aren't valid!");
 
-    const token = await this.generateToken(existingUser);
 
-    return this.usersDtoFactory.produceAuthedUserDto(existingUser, token);
+    const accessToken: Promise<string> = this.jwtHelper.generateAccessToken(existingUser);
+    const refreshToken: Promise<string> = existingUser.hashedRT ?
+      Promise.resolve(existingUser.hashedRT) : this.jwtHelper.generateRefreshToken(existingUser);
+
+
+    const tokensArray = await Promise.all([
+      accessToken,
+      refreshToken
+    ]);
+
+    if (!tokensArray) throw new UnauthorizedException("Access denied!");
+    const tokens = await this.jwtHelper.mapTokensArrayIntoObject(tokensArray);
+
+    if (!existingUser.hashedRT) existingUser = await this.usersService.updateUser(dto.email, { hashedRT: tokens.refreshToken });
+
+    return this.usersDtoFactory.produceAuthedUserDto(existingUser, tokens);
   }
 
   async register(dto: CreatUserDto): Promise<AuthedUserDto> {
@@ -49,9 +55,8 @@ export class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
-    candidate = await this.usersService.createUser({ ...dto, password: hashedPassword });
-    const token = await this.generateToken(candidate);
+    await this.usersService.createUser({ ...dto, password: hashedPassword });
 
-    return this.usersDtoFactory.produceAuthedUserDto(candidate, token);
+    return await this.login(dto);
   }
 }

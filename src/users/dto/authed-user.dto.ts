@@ -5,5 +5,8 @@ import { User } from "@prisma/client";
 export class AuthedUserDto extends UserDto {
   @IsJWT()
   @IsNotEmpty()
-  token: string = "";
+  tokens: {
+    accessToken: string,
+    refreshToken: string
+  } = { accessToken: null, refreshToken: null };
 }

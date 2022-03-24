@@ -3,6 +3,7 @@ import { User } from "@prisma/client";
 import { AuthedUserDto } from "../authed-user.dto";
 import { AbstractUsersFactory } from "./abstract.users-factory";
 import { CreatUserDto } from "../creat-user.dto";
+import { TokensResponseObject } from "../../../auth/interfaces";
 
 export class UsersDtoFactory extends AbstractUsersFactory<User, CreatUserDto | UserDto | AuthedUserDto> {
 
@@ -18,8 +19,8 @@ export class UsersDtoFactory extends AbstractUsersFactory<User, CreatUserDto | U
     return this.create<UserDto>(user, new UserDto());
   }
 
-  async produceAuthedUserDto(user: User, token: string): Promise<AuthedUserDto> {
-    return this.create<AuthedUserDto>({ ...user, token }, new AuthedUserDto());
+  async produceAuthedUserDto(user: User, tokens:TokensResponseObject): Promise<AuthedUserDto> {
+    return this.create<AuthedUserDto>({ ...user, tokens }, new AuthedUserDto());
   }
 
   async produceCreateUserDto(user: User): Promise<CreatUserDto> {
