@@ -1,8 +1,7 @@
-import { HttpException, Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { User } from "@prisma/client";
 import { DatabaseService } from "../shared/database/database.service";
 import { CreatUserDto } from "./dto/creat-user.dto";
-import { AuthedUserDto } from "./dto/authed-user.dto";
 
 @Injectable()
 export class UsersService {
@@ -25,11 +24,15 @@ export class UsersService {
     try {
       return await this.prisma.user.findUnique({ where: props });
     } catch (e) {
-      throw new HttpException(e, 404);
+      throw new NotFoundException(e);
     }
   }
 
   async updateUser<T>(email: string, data: T) {
-    return this.prisma.user.update({ where: { email }, data });
+    try {
+      return this.prisma.user.update({ where: { email }, data });
+    } catch (e) {
+      throw new NotFoundException(e);
+    }
   }
 }

@@ -35,17 +35,16 @@ export class JwtHelperService {
       const userFromRefreshToken = await this.jwtService.verifyAsync(tokensObject.refreshToken,
         { secret: this.jwtOptions.verification.refreshSecret });
 
-      const userFromAccessToken = await this.jwtService.verifyAsync(tokensObject.accessToken,
-        { secret: this.jwtOptions.verification.accessSecret });
-
-      const isTokenMatches = userFromRefreshToken.email === userFromAccessToken.email;
-      if (!isTokenMatches) throw new InvalidTokenException();
-
-      tokensObject.accessToken = await this.generateAccessToken(userFromAccessToken);
+      try {
+        await this.jwtService.verifyAsync(tokensObject.accessToken,
+          { secret: this.jwtOptions.verification.accessSecret });
+      } catch (e) {
+        tokensObject.accessToken = await this.generateAccessToken(userFromRefreshToken);
+      }
 
       return tokensObject;
     } catch (e) {
-      return new HttpException(e.message, 400);
+      return new InvalidTokenException();
     }
   }
 
