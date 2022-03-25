@@ -17,7 +17,7 @@ export class UsersService {
     return await this.prisma.user.create({ data });
   }
 
-  async findUserByEmail({ email }: CreatUserDto | AuthedUserDto | User): Promise<User | null> {
+  async findUserByEmail(email: string): Promise<User | null> {
     return await this.findOne({ email });
   }
 
