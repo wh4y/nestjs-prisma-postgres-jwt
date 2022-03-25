@@ -6,7 +6,8 @@ import { UsersModule } from "../../users/users.module";
 
 @Module({
   imports: [
-    JwtModule.register({})
+    JwtModule.register({}),
+    UsersModule
   ],
   providers: [...jwtHelperProviders, JwtHelperService],
   exports: [...jwtHelperProviders, JwtHelperService, JwtModule]

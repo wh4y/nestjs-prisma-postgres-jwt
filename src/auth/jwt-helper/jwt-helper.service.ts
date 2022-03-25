@@ -4,15 +4,26 @@ import { User } from "@prisma/client";
 import { TokensResponseObject } from "../interfaces";
 import { JWT_OPTIONS } from "./constants";
 import { JwtOptions } from "./interfaces";
+import * as bcrypt from "bcrypt";
+import { UsersService } from "../../users/users.service";
 
 @Injectable()
 export class JwtHelperService {
 
   constructor(
     private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
     @Inject(JWT_OPTIONS)
     private readonly jwtOptions: JwtOptions
   ) {
+  }
+
+  async hashToken(token: string): Promise<string> {
+    return await bcrypt.hash(token, 10);
+  }
+
+  async compareTokens(token: string, hash: string): Promise<boolean> {
+    return await bcrypt.compare(token, hash);
   }
 
   private async generateToken<T extends Object>(data: T, options?: JwtSignOptions): Promise<string> {
@@ -29,8 +40,14 @@ export class JwtHelperService {
 
   async refreshAccessToken(tokensObject: TokensResponseObject) {
     try {
-      const user = await this.jwtService.verifyAsync(tokensObject.refreshToken,
+      const userFromRefreshToken = await this.jwtService.verifyAsync(tokensObject.refreshToken,
         { secret: this.jwtOptions.verification.refreshSecret });
+
+      const user = await this.usersService.findOne({ email: userFromRefreshToken.email });
+      const hashedRT = user.hashedRT;
+
+      const isTokenMatches = this.compareTokens(tokensObject.refreshToken, hashedRT);
+      if (!isTokenMatches) throw new BadRequestException("Invalid token!");
 
       tokensObject.accessToken = await this.generateAccessToken(user);
 

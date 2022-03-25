@@ -40,10 +40,12 @@ export class AuthService {
       refreshToken
     ]);
 
-    if (!tokensArray) throw new UnauthorizedException("Access denied!");
+    if (!tokensArray[0] || !tokensArray[1]) throw new UnauthorizedException("Access denied!");
     const tokens = await this.jwtHelper.mapTokensArrayIntoObject(tokensArray);
 
-    if (!existingUser.hashedRT) existingUser = await this.usersService.updateUser(dto.email, { hashedRT: tokens.refreshToken });
+    const hashedRT = await this.jwtHelper.hashToken(tokens.refreshToken);
+
+    if (!existingUser.hashedRT) existingUser = await this.usersService.updateUser(dto.email, { hashedRT });
 
     return this.usersDtoFactory.produceAuthedUserDto(existingUser, tokens);
   }
