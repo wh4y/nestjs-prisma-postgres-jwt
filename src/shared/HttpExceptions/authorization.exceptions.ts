@@ -17,7 +17,7 @@ export class AuthorizationFailedException extends BadRequestException {
 
     switch (authorizationType) {
       case AuthorizationTypes.user:
-        message = "Email or password aren't valid!";
+        message = "Email or password aren't correct!";
         break;
       default:
         message = "Authorization failed!";

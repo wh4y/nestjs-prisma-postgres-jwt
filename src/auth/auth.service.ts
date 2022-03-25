@@ -26,9 +26,10 @@ export class AuthService {
   async login(dto: CreatUserDto): Promise<AuthedUserDto> {
 
     let existingUser = await this.usersService.findUserByEmail(dto.email);
-    const isPasswordValid = await AuthService.validatePassword(dto.password, existingUser.password);
+    if (!existingUser) throw new AuthorizationFailedException(AuthorizationTypes.user);
 
-    if (!isPasswordValid || !existingUser) throw new AuthorizationFailedException(AuthorizationTypes.user);
+    const isPasswordValid = await AuthService.validatePassword(dto.password, existingUser.password);
+    if (!isPasswordValid) throw new AuthorizationFailedException(AuthorizationTypes.user);
 
 
     const accessToken: Promise<string> = this.jwtHelper.generateAccessToken(existingUser);
