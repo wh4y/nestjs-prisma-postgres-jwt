@@ -4,6 +4,8 @@ import { AuthedUserDto } from "../authed-user.dto";
 import { AbstractUsersFactory } from "./abstract.users-factory";
 import { CreatUserDto } from "../creat-user.dto";
 import { TokensResponseObject } from "../../../auth/interfaces";
+import { AuthedUserSchema, CreateUserSchema, UserSchema } from "./schemas";
+
 
 export class UsersDtoFactory extends AbstractUsersFactory<User, CreatUserDto | UserDto | AuthedUserDto> {
 
@@ -15,15 +17,15 @@ export class UsersDtoFactory extends AbstractUsersFactory<User, CreatUserDto | U
     return schema;
   }
 
-  async produceUserDto(user: User): Promise<UserDto> {
-    return this.create<UserDto>(user, new UserDto());
+  async produceUserDto(user: User): Promise<UserSchema> {
+    return this.create<UserSchema>(user, new UserSchema());
   }
 
-  async produceAuthedUserDto(user: User, tokens:TokensResponseObject): Promise<AuthedUserDto> {
-    return this.create<AuthedUserDto>({ ...user, tokens }, new AuthedUserDto());
+  async produceAuthedUserDto(user: User, tokens: TokensResponseObject): Promise<AuthedUserSchema> {
+    return this.create<AuthedUserSchema>({ ...user, tokens }, new AuthedUserSchema());
   }
 
-  async produceCreateUserDto(user: User): Promise<CreatUserDto> {
-    return this.create<CreatUserDto>(user, new CreatUserDto());
+  async produceCreateUserDto(user: User): Promise<CreateUserSchema> {
+    return this.create<CreateUserSchema>(user, new CreateUserSchema());
   }
 }

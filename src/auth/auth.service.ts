@@ -24,6 +24,7 @@ export class AuthService {
   }
 
   async login(dto: CreatUserDto): Promise<AuthedUserDto> {
+
     let existingUser = await this.usersService.findUserByEmail(dto.email);
     const isPasswordValid = await AuthService.validatePassword(dto.password, existingUser.password);
 

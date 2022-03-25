@@ -4,12 +4,12 @@ export class UserDto {
 
   @IsNumber()
   @IsNotEmpty()
-  id: number = -1;
+  id: number;
 
   @IsString()
   @IsEmail()
   @IsNotEmpty()
-  email: string = "";
+  email: string;
 
   @IsDate()
   createdAt: Date;
