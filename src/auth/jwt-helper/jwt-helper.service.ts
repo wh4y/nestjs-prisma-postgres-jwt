@@ -6,6 +6,7 @@ import { JWT_OPTIONS } from "./constants";
 import { JwtOptions } from "./interfaces";
 import { UsersService } from "../../users/users.service";
 import { InvalidTokenException } from "../../shared/HttpExceptions";
+import { TokensDto } from "../dto/tokens.dto";
 
 @Injectable()
 export class JwtHelperService {
@@ -30,7 +31,7 @@ export class JwtHelperService {
     return await this.generateToken({ email, id, createdAt }, this.jwtOptions.sign.refreshToken);
   }
 
-  async refreshAccessToken(tokensObject: TokensResponseObject): Promise<TokensResponseObject | HttpException> {
+  async refreshAccessToken(tokensObject: TokensDto): Promise<TokensDto | HttpException> {
     try {
       const userFromRefreshToken = await this.jwtService.verifyAsync(tokensObject.refreshToken,
         { secret: this.jwtOptions.verification.refreshSecret });
