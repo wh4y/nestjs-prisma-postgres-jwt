@@ -23,11 +23,11 @@ export class JwtHelperService {
     return await this.jwtService.signAsync(data, options);
   }
 
-  async generateAccessToken({ email, id, createdAt }: User): Promise<string> {
+  async generateAccessToken({ email, id, createdAt }: Omit<User, 'password'>): Promise<string> {
     return await this.generateToken({ email, id, createdAt }, this.jwtOptions.sign.accessToken);
   }
 
-  async generateRefreshToken({ email, id, createdAt }: User): Promise<string> {
+  async generateRefreshToken({ email, id, createdAt }: Omit<User, 'password'>): Promise<string> {
     return await this.generateToken({ email, id, createdAt }, this.jwtOptions.sign.refreshToken);
   }
 
